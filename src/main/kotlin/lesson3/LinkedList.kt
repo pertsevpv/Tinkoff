@@ -1,0 +1,86 @@
+package lesson3
+
+fun <T> linkedListOf(vararg elements: T): LinkedList<T> {
+    if (elements.isEmpty()) return emptyLinkedList();
+    val result: LinkedList<T> = LinkedList()
+    for (e: T in elements) {
+        result.addLast(e)
+    }
+    return result
+}
+
+fun <T> emptyLinkedList(): LinkedList<T> = LinkedList()
+
+class LinkedList<T> {
+
+    class Node<T>(
+        var value: T?,
+        var prev: Node<T>?,
+        var next: Node<T>?
+    ) {
+        override fun toString() = value.toString()
+    }
+
+    private val head: Node<T>
+    private val tail: Node<T>
+    private var size: Int = 0
+
+    init {
+        head = Node(null, null, null)
+        tail = Node(null, null, null)
+
+        head.next = tail
+        tail.prev = head
+    }
+
+    fun addFirst(e: T) {
+        size++
+        val n: Node<T> = Node(e, head, head.next)
+        head.next!!.prev = n
+        head.next = n
+    }
+
+    fun addLast(e: T) {
+        size++
+        val n: Node<T> = Node(e, tail.prev, tail)
+        tail.prev?.next = n
+        tail.prev = n
+    }
+
+    fun removeFirst(): T? {
+        return if (isEmpty()) null
+        else {
+            size--
+            val a = head.next!!
+            head.next = a.next
+            head.next!!.prev = head
+            a.value
+        }
+    }
+
+    fun removeLast(): T? {
+        return if (isEmpty()) null
+        else {
+            size--
+            val a = tail.prev!!
+            tail.prev = a.prev
+            tail.prev!!.next = tail
+            a.value
+        }
+    }
+
+    fun size() = size
+
+    fun isEmpty() = size == 0
+
+    override fun toString(): String {
+        val sb: StringBuilder = StringBuilder()
+        var cur = head.next
+        while (cur?.next != null) {
+            sb.append(cur)
+            cur = cur.next
+            if (cur?.next != null) sb.append(", ")
+        }
+        return "$sb"
+    }
+}
