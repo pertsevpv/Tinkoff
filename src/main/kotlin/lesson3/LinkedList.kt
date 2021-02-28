@@ -34,17 +34,17 @@ class LinkedList<T> {
     }
 
     fun addFirst(e: T) {
-        size++
         val n: Node<T> = Node(e, head, head.next!!)
         head.next!!.prev = n
         head.next = n
+        size++
     }
 
     fun addLast(e: T) {
-        size++
         val n: Node<T> = Node(e, tail.prev!!, tail)
         tail.prev!!.next = n
         tail.prev = n
+        size++
     }
 
     fun removeFirst(): T? {
@@ -81,6 +81,6 @@ class LinkedList<T> {
             cur = cur.next
             if (cur?.next != null) sb.append(", ")
         }
-        return "$sb"
+        return sb.toString()
     }
 }
