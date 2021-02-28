@@ -14,6 +14,9 @@ fun main() {
     queue.enqueue(8)
     println(queue.dequeue())
     println(queue.dequeue())
+    println(queue.dequeue())
+    queue.enqueue(9)
+    println(queue.dequeue())
 
     println("-----//-----")
 
@@ -29,5 +32,8 @@ fun main() {
     stack.push(7)
     stack.push(8)
     println(stack.pop())
+    println(stack.pop())
+    println(stack.pop())
+    stack.push(9)
     println(stack.pop())
 }

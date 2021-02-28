@@ -13,21 +13,21 @@ fun <T> emptyLinkedList(): LinkedList<T> = LinkedList()
 
 class LinkedList<T> {
 
-    class Node<T>(
-        var value: T?,
-        var prev: Node<T>?,
-        var next: Node<T>?
-    ) {
-        override fun toString() = value.toString()
+    open class BaseNode<T>(var prev: BaseNode<T>?, var next: BaseNode<T>?)
+
+    class Node<T>(var value: T, prv: BaseNode<T>, nxt: BaseNode<T>) : BaseNode<T>(prev = prv, next = nxt) {
+        override fun toString(): String = value.toString()
     }
 
-    private val head: Node<T>
-    private val tail: Node<T>
+    private val head: BaseNode<T>
+    private val tail: BaseNode<T>
     private var size: Int = 0
 
     init {
-        head = Node(null, null, null)
-        tail = Node(null, null, null)
+        //У head всегда есть next - tail
+        //У tail всегда есть prev - head
+        head = BaseNode(null, null)
+        tail = BaseNode(null, null)
 
         head.next = tail
         tail.prev = head
@@ -35,25 +35,25 @@ class LinkedList<T> {
 
     fun addFirst(e: T) {
         size++
-        val n: Node<T> = Node(e, head, head.next)
+        val n: Node<T> = Node(e, head, head.next!!)
         head.next!!.prev = n
         head.next = n
     }
 
     fun addLast(e: T) {
         size++
-        val n: Node<T> = Node(e, tail.prev, tail)
-        tail.prev?.next = n
+        val n: Node<T> = Node(e, tail.prev!!, tail)
+        tail.prev!!.next = n
         tail.prev = n
     }
 
     fun removeFirst(): T? {
         return if (isEmpty()) null
         else {
-            size--
-            val a = head.next!!
+            val a = head.next as Node<T>
             head.next = a.next
             head.next!!.prev = head
+            size--
             a.value
         }
     }
@@ -61,10 +61,10 @@ class LinkedList<T> {
     fun removeLast(): T? {
         return if (isEmpty()) null
         else {
-            size--
-            val a = tail.prev!!
+            val a = tail.prev as Node<T>
             tail.prev = a.prev
             tail.prev!!.next = tail
+            size--
             a.value
         }
     }
