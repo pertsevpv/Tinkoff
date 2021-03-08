@@ -1,5 +1,5 @@
 class UserData {
-    private val userList = listOf<User>(
+    private val userList: List<User> = listOf(
         User(0, "Vitalya", "Aksyonov", "VitalyaAksyonov_736190@ya.ru", 736190),
         User(1, "Maxim", "Sidorov", "MaximSidorov_634526@example.vom", 634526),
         User(2, "Kolya", "Bagrov", "KolyaBagrov_582173@ya.ru", 582173),
@@ -28,7 +28,7 @@ class UserData {
         User(25, "Ivan", "Petrov", "IvanPetrov_391333@outlook.com", 391333)
     )
 
-    fun userData() = userList
+    fun userData(): List<User> = userList
 
-    fun getUserByID(id: Int) = userList.find { it.userID == id }
+    fun getUserByID(id: Int): User? = userList.find { it.userID == id }
 }

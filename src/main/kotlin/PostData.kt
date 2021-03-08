@@ -1,5 +1,5 @@
 class PostData() {
-    private val postList: List<Post> = listOf<Post>(
+    private val postList: List<Post> = listOf(
         Post(0, "Title0", "Body0"),
         Post(1, "Title1", "Body1"),
         Post(2, "Title2", "Body2"),
@@ -54,7 +54,7 @@ class PostData() {
         Post(51, "Title51", "Body51")
     )
 
-    private val postsIDList = listOf(
+    private val postsIDList: List<UserPosts> = listOf(
         UserPosts(0, listOf(0, 1)),
         UserPosts(1, listOf(2, 3)),
         UserPosts(2, listOf(4, 5)),
@@ -83,7 +83,7 @@ class PostData() {
         UserPosts(25, listOf(50, 51))
     )
 
-    fun postData() = postsIDList
+    fun postData(): List<UserPosts> = postsIDList
 
-    fun getUserPostsByID(id: Int) = postData().find { it.userID == id }
+    fun getUserPostsByID(id: Int): UserPosts? = postData().find { it.userID == id }
 }

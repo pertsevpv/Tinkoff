@@ -1,22 +1,27 @@
+import javax.management.ImmutableDescriptor
+
 class Service {
 
-    fun f5a() =
-        UserData().userData().map { it ->
+    fun f5a(): List<UserAndPosts> =
+        UserData().userData().map { user ->
             UserAndPosts(
-                it.userID,
-                it.name,
-                it.surname,
-                it.email,
-                it.phone,
-                PostData().getUserPostsByID(it.userID)!!.postsID
+                user.userID,
+                user.name,
+                user.surname,
+                user.email,
+                user.phone,
+                PostData().getUserPostsByID(user.userID)!!.postsID
             )
         }
 
-    fun f5b() =
+    fun f5b(): List<UserAndPosts> =
         f5a().sortedBy { it.name }
 
-    fun f5c() =
-        f5a().groupBy { it.email.substring(it.email.indexOf('@')) }
 
-    fun f5d() = f5a().filter { it.name[0] == it.surname[0] }.size
+    fun f5c(): Map<String, List<UserAndPosts>> =
+        f5a().groupBy { it.email.substring(it.email.indexOf('@')) }.toMutableMap()
+
+    fun f5d(): Int =
+        f5a().count { it.name[0] == it.surname[0] }
+
 }

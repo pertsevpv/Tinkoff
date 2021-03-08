@@ -1,9 +1,20 @@
+fun test(col: Iterable<Any>) {
+    col.forEach {
+        println(it)
+    }
+    println("\n----------///----------\n")
+}
+
+fun test(map: Map<String, Any>) {
+    map.forEach{
+        println(it)
+    }
+    println("\n----------///----------\n")
+}
+
 fun main() {
-    for (i in Service().f5a()) println(i)
-    println("\n----------///----------\n")
-    for (i in Service().f5b()) println(i)
-    println("\n----------///----------\n")
-    for (i in Service().f5c()) println(i)
-    println("\n----------///----------\n")
+    test(Service().f5a())
+    test(Service().f5b())
+    test(Service().f5c())
     println(Service().f5d())
 }
