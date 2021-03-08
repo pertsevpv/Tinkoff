@@ -17,11 +17,9 @@ class Service {
     fun f5b(): List<UserAndPosts> =
         f5a().sortedBy { it.name }
 
-
     fun f5c(): Map<String, List<UserAndPosts>> =
-        f5a().groupBy { it.email.substring(it.email.indexOf('@')) }.toMutableMap()
+        f5a().groupBy { it.email.substring(it.email.indexOf('@')) }
 
     fun f5d(): Int =
         f5a().count { it.name[0] == it.surname[0] }
-
 }
