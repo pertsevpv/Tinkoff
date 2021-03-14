@@ -1,3 +1,5 @@
+package lesson4
+
 class UserData {
     private val userList: List<User> = listOf(
         User(0, "Vitalya", "Aksyonov", "VitalyaAksyonov_736190@ya.ru", 736190),
@@ -28,7 +30,9 @@ class UserData {
         User(25, "Ivan", "Petrov", "IvanPetrov_391333@outlook.com", 391333)
     )
 
-    fun userData(): List<User> = userList
+    fun userData(): List<User> =
+        userList
 
-    fun getUserByID(id: Int): User? = userList.find { it.userID == id }
+    fun getUserByID(id: Int): User? =
+        userList.find { it.userID == id }
 }

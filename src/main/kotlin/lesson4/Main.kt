@@ -1,20 +1,21 @@
+package lesson4
+
 fun test(col: Iterable<Any>) {
     col.forEach {
         println(it)
     }
-    println("\n----------///----------\n")
+    line()
 }
 
-fun test(map: Map<String, Any>) {
-    map.forEach{
-        println(it)
-    }
+fun line() =
     println("\n----------///----------\n")
-}
 
 fun main() {
     test(Service().f5a())
     test(Service().f5b())
-    test(Service().f5c())
+    Service().f5c().forEach {
+        println(it)
+    }
+    line()
     println(Service().f5d())
 }

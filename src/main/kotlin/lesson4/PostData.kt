@@ -1,3 +1,5 @@
+package lesson4
+
 class PostData() {
     private val postList: List<Post> = listOf(
         Post(0, "Title0", "Body0"),
@@ -83,7 +85,9 @@ class PostData() {
         UserPosts(25, listOf(50, 51))
     )
 
-    fun postData(): List<UserPosts> = postsIDList
+    fun postData(): List<UserPosts> =
+        postsIDList
 
-    fun getUserPostsByID(id: Int): UserPosts? = postData().find { it.userID == id }
+    fun getUserPostsByID(id: Int): UserPosts? =
+        postData().find { it.userID == id }
 }

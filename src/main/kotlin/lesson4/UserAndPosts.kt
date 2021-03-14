@@ -1,3 +1,5 @@
+package lesson4
+
 import java.lang.StringBuilder
 
 data class UserAndPosts(
