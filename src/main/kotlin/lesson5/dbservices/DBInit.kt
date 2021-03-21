@@ -5,21 +5,20 @@ class DBInit(
     private val tables: List<Table>
 ) {
 
-    fun createAllTables(){
-        for (t in tables)createTable(t)
-    }
+    fun createAllTables() =
+        tables.forEach { createTable(it) }
 
-    fun dropAllTables(){
-        for (t in tables)dropTable(t)
-    }
+
+    fun dropAllTables() =
+        tables.forEach { dropTable(it) }
 
     private fun createTable(table: Table) {
         DBService(databaseName).use { dbService ->
-           runCatching {
+            runCatching {
                 val sqlQuery = makeCreateQuery(table.tableName, table.argsMap)
                 prepareAndExecute(dbService, sqlQuery)
                 println("Table ${table.tableName} created")
-           }.onFailure {
+            }.onFailure {
                 println("Something went wrong while init table ${table.tableName}")
                 println(it.message)
             }
@@ -29,7 +28,7 @@ class DBInit(
     private fun dropTable(table: Table) {
         DBService(databaseName).use { dbService ->
             runCatching {
-            val sqlQuery = makeDropQuery(table.tableName)
+                val sqlQuery = makeDropQuery(table.tableName)
                 prepareAndExecute(dbService, sqlQuery)
                 println("Table ${table.tableName} dropped")
             }.onFailure {

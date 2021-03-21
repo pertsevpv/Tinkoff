@@ -1,9 +1,6 @@
 package lesson5.dbservices
 
 import lesson5.dao.DAO
-import org.sqlite.SQLiteException
-import java.io.IOException
-import java.lang.Exception
 import java.sql.ResultSet
 import kotlin.text.StringBuilder
 
@@ -24,10 +21,11 @@ class DBQueries(private val mainTable: Table) {
                     StringBuilder("INSERT INTO $tableName(${mainTable.toColumnString()}) VALUES ")
                 for (vl in values.indices) {
                     sqlQuery.append("(").append(values[vl].toValueString()).append(")")
-                    if (vl != values.size - 1)
+                    if (vl != values.size - 1) {
                         sqlQuery.append(", ")
-                    else
+                    } else {
                         sqlQuery.append(";")
+                    }
                 }
                 prepareAndExecute(dbService, sqlQuery.toString())
                 println("Inserted $values into $tableName")
@@ -42,11 +40,11 @@ class DBQueries(private val mainTable: Table) {
         return DBService(databaseName).use { dbService ->
             runCatching {
                 val sqlQuery = "SELECT * FROM $tableName"
-                val rs = prepareAndExecuteQuery(dbService, sqlQuery)
-                println("Selected all from $tableName")
-                val ans = getStringsFromResponse(rs)
-                rs.close()
-                ans
+                prepareAndExecuteQuery(dbService, sqlQuery).use { rs ->
+                    println("Selected all from $tableName")
+                    val ans = getStringsFromResponse(rs)
+                    ans
+                }
             }.onFailure {
                 println("Something went wrong while selecting from $tableName")
                 println(it.message)
@@ -60,19 +58,19 @@ class DBQueries(private val mainTable: Table) {
                 val sqlQuery = "SELECT * FROM ${table.tableName} WHERE ${table.args[0]} = ?"
                 val preparedStatement = dbService.conn.prepareStatement(sqlQuery)
                 preparedStatement.setInt(1, id)
-                val rs = preparedStatement.executeQuery()
-                val list = getStringsFromResponse(rs, table.argsMap)
-                rs.close()
-                when {
-                    list.isEmpty() -> {
-                        println("No elements with id $id")
-                        null
+                preparedStatement.executeQuery().use { rs ->
+                    val list = getStringsFromResponse(rs, table.argsMap)
+                    when {
+                        list.isEmpty() -> {
+                            println("No elements with id $id")
+                            null
+                        }
+                        list.size != 1 -> {
+                            println("Many elements with id $id")
+                            null
+                        }
+                        else -> list[0]
                     }
-                    list.size != 1 -> {
-                        println("Many elements with id $id")
-                        null
-                    }
-                    else -> list[0]
                 }
             }.onFailure {
                 println("Something went wrong while selecting from $tableName")
@@ -109,11 +107,10 @@ class DBQueries(private val mainTable: Table) {
                 val sqlQuery =
                     "SELECT ${makeColumns(producerAndProductArgs)} FROM $tableName INNER JOIN ${products.tableName} ON $tableName.$id = ${products.tableName}.$id"
                 val preparedStatement = dbService.conn.prepareStatement(sqlQuery)
-                val rs = preparedStatement.executeQuery()
-                println("$tableName joined ${products.tableName}")
-                val ans = getStringsFromResponse(rs, producerAndProductArgsMap)
-                rs.close()
-                ans
+                preparedStatement.executeQuery().use { rs ->
+                    println("$tableName joined ${products.tableName}")
+                    getStringsFromResponse(rs, producerAndProductArgsMap)
+                }
             }.onFailure {
                 println("Something went wrong while joining")
                 println(it.message)
@@ -128,11 +125,10 @@ class DBQueries(private val mainTable: Table) {
                 val sqlQuery = "SELECT * FROM ${table.tableName} WHERE ${table.args[1]} = ?"
                 val preparedStatement = dbService.conn.prepareStatement(sqlQuery)
                 preparedStatement.setInt(1, id)
-                val rs = preparedStatement.executeQuery()
-                println("Selected products by producerID = $id")
-                val ans = getStringsFromResponse(rs, table.argsMap)
-                rs.close()
-                ans
+                preparedStatement.executeQuery().use { rs ->
+                    println("Selected products by producerID = $id")
+                    getStringsFromResponse(rs, table.argsMap)
+                }
             }.onFailure {
                 println("Something went wrong while selecting")
                 println(it.message)
@@ -153,15 +149,14 @@ class DBQueries(private val mainTable: Table) {
                 val concat = "GROUP_CONCAT(${args[2]},\", \")"
                 val sqlQuery = "SELECT ${args[1]}, $concat FROM $tableName GROUP BY ${args[1]}"
                 val preparedStatement = dbService.conn.prepareStatement(sqlQuery)
-                val rs = preparedStatement.executeQuery()
                 val resMap: Map<String, DataTypes> = mapOf(
                     args[1] to DataTypes.INT,
                     concat to DataTypes.TEXT
                 )
-                println("Grouped CustomerID by ProductID")
-                val ans = getStringsFromResponse(rs, resMap)
-                rs.close()
-                ans
+                preparedStatement.executeQuery().use { rs ->
+                    println("Grouped CustomerID by ProductID")
+                    getStringsFromResponse(rs, resMap)
+                }
             }.onFailure {
                 println("Something went wrong while selecting")
                 println(it.message)
@@ -175,11 +170,10 @@ class DBQueries(private val mainTable: Table) {
             runCatching {
                 val sqlQuery = "SELECT * FROM $tableName WHERE ${args[3]} >= $minCost ORDER BY ${args[2]}"
                 val preparedStatement = dbService.conn.prepareStatement(sqlQuery)
-                val rs = preparedStatement.executeQuery()
-                println("Selected all elements with min cost $minCost and sorted by their productNames")
-                val ans = getStringsFromResponse(rs)
-                rs.close()
-                ans
+                preparedStatement.executeQuery().use { rs ->
+                    println("Selected all elements with min cost $minCost and sorted by their productNames")
+                    getStringsFromResponse(rs)
+                }
             }.onFailure {
                 println("Something went wrong while selecting")
                 println(it.message)
@@ -193,12 +187,11 @@ class DBQueries(private val mainTable: Table) {
                 val sqlQuery = "SELECT * FROM ${midTable.tableName} WHERE ${midTable.args[midId]} = ?"
                 val preparedStatement = dbService.conn.prepareStatement(sqlQuery)
                 preparedStatement.setInt(1, id)
-                val rs = preparedStatement.executeQuery()
-                val ans = getStringsFromResponse(rs, midTable.argsMap).map {
-                    selectByIdFrom(it.split(" ")[toInt].toInt(), toTable) ?: ""
+                preparedStatement.executeQuery().use { rs ->
+                    getStringsFromResponse(rs, midTable.argsMap).map {
+                        selectByIdFrom(it.split(" ")[toInt].toInt(), toTable) ?: ""
+                    }
                 }
-                rs.close()
-                ans
             }.onFailure {
                 println("Something went wrong while selecting")
                 println(it.message)

@@ -8,8 +8,9 @@ class Table(val dbName: String, val tableName: String, val args: List<String>, v
         StringBuilder().apply {
             for (el in args.indices) {
                 append(args[el])
-                if (el != args.size - 1)
+                if (el != args.size - 1) {
                     append(", ")
+                }
             }
         }.toString()
 }
@@ -93,22 +94,26 @@ fun prepareAndExecuteQuery(dbService: DBService, query: String): ResultSet {
 }
 
 fun makeInitColumns(data: Map<String, DataTypes>): String {
-    var count = 0;
+    var count = 0
     val args = StringBuilder()
     data.forEach {
         args.append(it.key).append(" ").append(it.value)
-        if (count != data.size - 1) args.append(", ")
+        if (count != data.size - 1) {
+            args.append(", ")
+        }
         count++
     }
     return args.toString()
 }
 
 fun makeColumns(data: List<String>): String {
-    var count = 0;
-    val args: StringBuilder = StringBuilder()
+    var count = 0
+    val args = StringBuilder()
     data.forEach {
         args.append(it)
-        if (count != data.size - 1) args.append(", ")
+        if (count != data.size - 1) {
+            args.append(", ")
+        }
         count++
     }
     return args.toString()
