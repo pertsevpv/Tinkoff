@@ -1,4 +1,6 @@
-package lesson5
+package lesson5.data
+
+import lesson5.dao.Producer
 
 class ProducerData {
 

@@ -1,112 +1,134 @@
 package lesson5
 
-fun line() = println("\n-----///-----\n")
+import lesson5.data.CustomerData
+import lesson5.data.OrderData
+import lesson5.data.ProducerData
+import lesson5.data.ProductData
+import lesson5.dbservices.*
+
+fun line(size: Int) {
+    println()
+    print("-".repeat(size))
+    print("/".repeat(size / 2))
+    println("-".repeat(size))
+    println()
+}
 
 fun oneToManyTest() {
-    val producers = Table("OTM_DB", "Producers", producerArgs, producerArgsMap)
-    val products = Table("OTM_DB", "Products", productArgs, productArgsMap)
+    val producers = Table(
+        "OTM_DB",
+        "Producers",
+        producerArgs,
+        producerArgsMap
+    )
+    val products = Table(
+        "OTM_DB",
+        "Products",
+        productArgs,
+        productArgsMap
+    )
 
-    val dbInit = DBInit("OTM_DB")
+    val dbInit = DBInit("OTM_DB", listOf(producers, products))
     val producerQueries = DBQueries(producers)
     val productQueries = DBQueries(products)
 
-    dbInit.createTable(producers)
-    dbInit.createTable(products)
-    line()
+    dbInit.createAllTables()
+    line(5)
 
-    for (prod in ProducerData().getProducers()) {
-        producerQueries.insert(prod.toList())
-    }
-    line()
+    producerQueries.insertList(ProducerData().getProducers())
 
-    for (prod in ProductData().getProducts()) {
-        productQueries.insert(prod.toList())
-    }
-    line()
+    line(5)
+
+    productQueries.insertList(ProductData().getProducts())
+    line(5)
 
     producerQueries.getProductsByProducerID(1, products).forEach {
         println(it)
     }
-    line()
+    line(5)
 
-    println(producerQueries.selectById(2))
-    line()
+    println(producerQueries.selectByID(2))
+    line(5)
 
     productQueries.selectUnderCost(80).forEach {
         println(it)
     }
-    line()
+    line(5)
 
     producerQueries.join(products).forEach {
         println(it)
     }
-    line()
+    line(5)
 
-    dbInit.dropTable("Producers")
-    dbInit.dropTable("Products")
+    dbInit.dropAllTables()
 }
 
 fun manyToManyTest() {
-    val products = Table("MTM_DB", "Products", productArgs, productArgsMap)
-    val orders = Table("MTM_DB", "Orders", orderArgs, orderArgsMap)
-    val customers = Table("MTM_DB", "Customers", customerArgs, customerArgsMap)
+    val products = Table(
+        "MTM_DB",
+        "Products",
+        productArgs,
+        productArgsMap
+    )
+    val orders = Table(
+        "MTM_DB",
+        "Orders",
+        orderArgs,
+        orderArgsMap
+    )
+    val customers = Table(
+        "MTM_DB",
+        "Customers",
+        customerArgs,
+        customerArgsMap
+    )
 
-    val dbInit = DBInit("MTM_DB")
+    val dbInit = DBInit("MTM_DB", listOf(products, orders, customers))
 
     val prodQueries = DBQueries(products)
     val ordQueries = DBQueries(orders)
     val custQueries = DBQueries(customers)
 
-    dbInit.createTable(products)
-    dbInit.createTable(orders)
-    dbInit.createTable(customers)
-    line()
+    dbInit.createAllTables()
+    line(5)
 
-    for (prod in ProductData().getProducts()) {
-        prodQueries.insert(prod.toList())
-    }
-    line()
+    prodQueries.insertList(ProductData().getProducts())
+    line(5)
 
-    for (order in OrderData().getOrders()) {
-        ordQueries.insert(order.toList())
-    }
-    line()
+    ordQueries.insertList(OrderData().getOrders())
+    line(5)
 
-    for (cust in CustomerData().getCustomers()) {
-        custQueries.insert(cust.toList())
-    }
-    line()
+    custQueries.insertList(CustomerData().getCustomers())
+    line(5)
 
     prodQueries.getCustomersByProductID(1, orders, customers).forEach {
         println(it)
     }
-    line()
+    line(5)
 
     prodQueries.getProductsByCustomerID(1, orders, products).forEach {
         println(it)
     }
-    line()
+    line(5)
 
     ordQueries.groupCustomersByProductsID().forEach {
         println(it)
     }
-    line()
+    line(5)
 
     prodQueries.selectAndSortProducts(80).forEach {
         println(it)
     }
-    line()
+    line(5)
 
-    dbInit.dropTable("Products")
-    dbInit.dropTable("Orders")
-    dbInit.dropTable("Customers")
+    dbInit.dropAllTables()
 }
 
 fun main() {
     oneToManyTest()
     println()
-    println("--------------------------/////////------------------------")
-    println("-------------------------/////////-------------------------")
-    println("------------------------/////////--------------------------\n")
+    line(20)
+    line(20)
+    line(20)
     manyToManyTest()
 }

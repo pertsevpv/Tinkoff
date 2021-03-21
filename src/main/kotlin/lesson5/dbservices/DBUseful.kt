@@ -1,14 +1,27 @@
-package lesson5
+package lesson5.dbservices
 
 import java.lang.StringBuilder
 import java.sql.ResultSet
 
-class Table(val dbName: String, val tableName: String, val args: List<String>, val argsMap: Map<String, String>)
+class Table(val dbName: String, val tableName: String, val args: List<String>, val argsMap: Map<String, DataTypes>) {
+    fun toColumnString(): String =
+        StringBuilder().apply {
+            for (el in args.indices) {
+                append(args[el])
+                if (el != args.size - 1)
+                    append(", ")
+            }
+        }.toString()
+}
 
-val producerArgsMap: Map<String, String> = mapOf(
-    "producerID" to "INT",
-    "producerName" to "TEXT",
-    "rating" to "INT"
+enum class DataTypes {
+    TEXT, INT
+}
+
+val producerArgsMap: Map<String, DataTypes> = mapOf(
+    "producerID" to DataTypes.INT,
+    "producerName" to DataTypes.TEXT,
+    "rating" to DataTypes.INT
 )
 
 val producerArgs: List<String> = listOf(
@@ -17,11 +30,11 @@ val producerArgs: List<String> = listOf(
     "rating"
 )
 
-val productArgsMap: Map<String, String> = mapOf(
-    "productID" to "INT",
-    "producerID" to "INT",
-    "productName" to "TEXT",
-    "prodCost" to "INT"
+val productArgsMap: Map<String, DataTypes> = mapOf(
+    "productID" to DataTypes.INT,
+    "producerID" to DataTypes.INT,
+    "productName" to DataTypes.TEXT,
+    "prodCost" to DataTypes.INT
 )
 
 val productArgs: List<String> = listOf(
@@ -38,11 +51,11 @@ val producerAndProductArgs: List<String> = listOf(
     "prodCost"
 )
 
-val producerAndProductArgsMap: Map<String, String> = mapOf(
-    "producerName" to "TEXT",
-    "rating" to "INT",
-    "productName" to "TEXT",
-    "prodCost" to "INT"
+val producerAndProductArgsMap: Map<String, DataTypes> = mapOf(
+    "producerName" to DataTypes.TEXT,
+    "rating" to DataTypes.INT,
+    "productName" to DataTypes.TEXT,
+    "prodCost" to DataTypes.INT
 )
 
 val customerArgs: List<String> = listOf(
@@ -51,10 +64,10 @@ val customerArgs: List<String> = listOf(
     "custTel"
 )
 
-val customerArgsMap: Map<String, String> = mapOf(
-    "custID" to "INT",
-    "custName" to "TEXT",
-    "custTel" to "INT"
+val customerArgsMap: Map<String, DataTypes> = mapOf(
+    "custID" to DataTypes.INT,
+    "custName" to DataTypes.TEXT,
+    "custTel" to DataTypes.INT
 )
 
 val orderArgs: List<String> = listOf(
@@ -63,10 +76,10 @@ val orderArgs: List<String> = listOf(
     "customerID"
 )
 
-val orderArgsMap: Map<String, String> = mapOf(
-    "orderID" to "INT",
-    "productID" to "INT",
-    "customerID" to "INT"
+val orderArgsMap: Map<String, DataTypes> = mapOf(
+    "orderID" to DataTypes.INT,
+    "productID" to DataTypes.INT,
+    "customerID" to DataTypes.INT
 )
 
 fun prepareAndExecute(dbService: DBService, query: String) {
@@ -79,9 +92,9 @@ fun prepareAndExecuteQuery(dbService: DBService, query: String): ResultSet {
     return preparedStatement.executeQuery()
 }
 
-fun makeInitColumns(data: Map<String, String>): String {
+fun makeInitColumns(data: Map<String, DataTypes>): String {
     var count = 0;
-    val args: StringBuilder = StringBuilder()
+    val args = StringBuilder()
     data.forEach {
         args.append(it.key).append(" ").append(it.value)
         if (count != data.size - 1) args.append(", ")
@@ -95,20 +108,6 @@ fun makeColumns(data: List<String>): String {
     val args: StringBuilder = StringBuilder()
     data.forEach {
         args.append(it)
-        if (count != data.size - 1) args.append(", ")
-        count++
-    }
-    return args.toString()
-}
-
-fun makeValues(data: List<Any>): String {
-    var count = 0;
-    val args = StringBuilder()
-    data.forEach {
-        if (it is String)
-            args.append("\"$it\"")
-        else if (it is Int)
-            args.append(it)
         if (count != data.size - 1) args.append(", ")
         count++
     }

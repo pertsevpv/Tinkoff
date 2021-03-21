@@ -1,4 +1,6 @@
-package lesson5
+package lesson5.data
+
+import lesson5.dao.Customer
 
 class CustomerData {
     private val customerList: List<Customer> = listOf(
