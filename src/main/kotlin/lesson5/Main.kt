@@ -121,7 +121,7 @@ fun manyToManyTest() {
     }
     line(5)
 
-    dbInit.dropAllTables()
+    //dbInit.dropAllTables()
 }
 
 fun main() {
