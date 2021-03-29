@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertAll
 import org.junit.jupiter.api.extension.ExtendWith
+import kotlin.math.cos
 
 
 @ExtendWith(MockKExtension::class)
@@ -13,6 +14,13 @@ class ProductDSLTest {
 
     @Test
     fun `dsl test`() {
+        val prodDsl = product {
+            id = 2
+            name = "Bad Product"
+            factory = "Bad Factory"
+            cost = 1000.0
+        }
+        prodDsl.sale(10.0)
         val prod = mockk<Product> {
             every { id } returns 1
             every { name } returns "Cool Product"
