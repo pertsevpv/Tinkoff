@@ -1,12 +1,8 @@
 package task1
 
 import kotlinx.coroutines.*
-import kotlin.random.Random
 
 fun main() {
-    for (i in 0..1000) {
-        println(Random.nextInt(1, 2))
-    }
     var time = ""
     var weath = ""
     runBlocking {
