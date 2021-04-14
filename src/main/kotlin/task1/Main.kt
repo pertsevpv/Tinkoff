@@ -1,16 +1,19 @@
 package task1
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 
 fun main() {
     var time = ""
     var weath = ""
+    val curTime = LocalDateTime.now()
     runBlocking {
         launch {
-            time = getTime()
+            time = getTime(curTime)
         }
         launch {
-            weath = getWeather()
+            weath = getWeather(curTime)
         }
     }
     println(time.concat(weath))
@@ -19,10 +22,10 @@ fun main() {
 fun String.concat(str: String) =
     "$this\n$str"
 
-suspend fun getTime(): String {
-    return TimeService().getTime()
+suspend fun getTime(now: LocalDateTime): String {
+    return TimeService(now).getTime()
 }
 
-suspend fun getWeather(): String {
-    return WeatherService().getExtraInfo()
+suspend fun getWeather(now: LocalDateTime): String {
+    return WeatherService(now).getExtraInfo()
 }

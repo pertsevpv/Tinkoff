@@ -3,9 +3,14 @@ package task1
 import kotlinx.coroutines.delay
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import kotlin.math.abs
 import kotlin.random.Random
 
-class CurrentTime {
+class CurrentTime(private val now: LocalDateTime) {
+    val time: String = now.format(DateTimeFormatter.ofPattern("HH:mm:ss"))
+}
+
+class CurrentWeather(private val now: LocalDateTime) {
     private val possibleWeather = listOf(
         "Sunny",
         "Rain",
@@ -13,23 +18,26 @@ class CurrentTime {
         "Cloudy"
     )
 
-    val time: String = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"))
-    val weather: String = possibleWeather[time.hashCode() % 4]
-    val humidity: Int = time.hashCode() % 100 + 1
+    val weather: String = possibleWeather[abs(now.hashCode()) % 4] // Не думал, что хеш может быть отрицательным(
+    val humidity: Int = abs(now.hashCode()) % 100 + 1
 }
 
-class TimeService {
+class TimeService(private val now: LocalDateTime) {
+
     suspend fun getTime(): String {
-        val time = CurrentTime()
+        val time = CurrentTime(now)
         delay(Random.nextLong(100, 1000))
         return time.time
     }
+
 }
 
-class WeatherService {
+class WeatherService(private val now: LocalDateTime) {
+
     suspend fun getExtraInfo(): String {
-        val time = CurrentTime()
+        val weather = CurrentWeather(now)
         delay(Random.nextLong(100, 1000))
-        return "${time.weather} ${time.humidity}%"
+        return "${weather.weather} ${weather.humidity}%"
     }
+
 }
